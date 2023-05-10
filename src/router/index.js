@@ -1,9 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-const Dashboard = { template: "<div>Home</div>" };
+import Dashboard from '../pages/Dashboard.vue'
 
 const routes = [
   {
-    path: "/",
+    path: '/',
+    name: 'Dashboard',
     component: Dashboard,
   },
 ];
