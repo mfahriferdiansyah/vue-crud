@@ -8,7 +8,7 @@ export default {
     ...mapState(useUsersStore, ['userLists', 'totalUsers']),
   },
   methods: {
-    ...mapActions(useUsersStore, ['getAllUser', 'deleteUser']),
+    ...mapActions(useUsersStore, ['getAllUser', 'deleteUser', 'editUser']),
     changePage(page) {
       this.getAllUser(10*(page - 1))
     },
@@ -38,7 +38,7 @@ export default {
         <td>{{ item.age }}</td>
         <td>{{ item.company.department }}</td>
         <td>
-          <button type="button" class="btn btn-primary btn-sm">Edit</button>
+          <button @click="editUser(item.id)" type="button" class="btn btn-primary btn-sm">Edit</button>
           <button @click="deleteUser(item.id)" type="button" class="btn btn-secondary btn-sm mx-2">Delete</button>
         </td>
       </tr>
