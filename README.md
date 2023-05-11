@@ -1,5 +1,6 @@
 # vue-crud
 Simple CRUD app using Vue.js and Pinia as state management.
+Deploymenyt : https://vue-crud-0000.web.app/
 
 # Vue 3 + Vite
 
