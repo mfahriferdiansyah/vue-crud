@@ -8,6 +8,7 @@ export const useUsersStore = defineStore("user", {
     userFirstName: null,
     userLastName: null,
     userDepartment: null,
+    userAge: null,
     isEdit: false,
     userId: null,
   }),
@@ -18,9 +19,9 @@ export const useUsersStore = defineStore("user", {
         .then((json) => {
           let { users, total } = json;
           this.userLists = users;
-          this.userLists.forEach(el => {
-            el.lastName = this.maskLastName(el.lastName)
-          })
+          this.userLists.forEach((el) => {
+            el.lastName = this.maskLastName(el.lastName);
+          });
 
           this.totalUsers = total;
           this.totalSKip = skip;
@@ -45,6 +46,8 @@ export const useUsersStore = defineStore("user", {
         return this.alertHandler("error", "Please Fill User First Name.");
       else if (!this.userLastName)
         return this.alertHandler("error", "Please Fill User Last Name.");
+      else if (!this.userAge)
+        return this.alertHandler("error", "Please Fill User Age.");
       else if (!this.userDepartment)
         return this.alertHandler("error", "Please Fill User Department.");
       else if (!this.isEdit) {
@@ -54,6 +57,7 @@ export const useUsersStore = defineStore("user", {
           body: JSON.stringify({
             firstName: this.userFirstName,
             lastName: this.userLastName,
+            age: this.userAge,
             company: { department: this.userDepartment },
           }),
         })
@@ -63,31 +67,35 @@ export const useUsersStore = defineStore("user", {
               "success",
               `User ${json.firstName} Added Sucessfully`
             );
-            this.resetForm()
+            this.resetForm();
           })
           .catch(console.log);
+      } else if (this.isEdit) {
+        this.pushUpdate();
       }
-      else if(this.isEdit) {
-        fetch("https://dummyjson.com/users/"+this.userId, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            firstName: this.userFirstName,
-            lastName: this.userLastName,
-            company: { department: this.userDepartment },
-          }),
+    },
+
+    pushUpdate() {
+      fetch("https://dummyjson.com/users/" + this.userId, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: this.userFirstName,
+          lastName: this.userLastName,
+          age: this.userAge,
+          company: { department: this.userDepartment },
+        }),
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          this.alertHandler(
+            "success",
+            `User ${json.firstName} Updated Sucessfully`
+          );
+          this.resetForm();
+          this.router.push("/");
         })
-          .then((res) => res.json())
-          .then((json) => {
-            this.alertHandler(
-              "success",
-              `User ${json.firstName} Updated Sucessfully`
-            );
-            this.resetForm()
-            this.router.push('/')
-          })
-          .catch(console.log);
-      }
+        .catch(console.log);
     },
 
     editUser(id) {
@@ -99,17 +107,18 @@ export const useUsersStore = defineStore("user", {
           this.userFirstName = json.firstName;
           this.userLastName = json.lastName;
           this.userDepartment = json.company.department;
+          this.userAge = json.age;
           this.router.push("/user-form?edit=" + id);
         })
         .catch(console.log);
     },
 
     maskLastName(lastName) {
-      let noMask = lastName[0]
-      for(let i = 0; i < lastName.length - 1; i++){
-        noMask += '*';
+      let noMask = lastName[0];
+      for (let i = 0; i < lastName.length - 1; i++) {
+        noMask += "*";
       }
-      return noMask
+      return noMask;
     },
 
     alertHandler(sign, message) {
@@ -135,7 +144,8 @@ export const useUsersStore = defineStore("user", {
       this.userFirstName = null;
       this.userLastName = null;
       this.userDepartment = null;
+      this.userAge = null;
       this.isEdit = false;
-    }
+    },
   },
 });
